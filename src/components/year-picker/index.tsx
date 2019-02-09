@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { setYear } from '../../actions';
+import { StateTree } from '../../reducers';
 import { getSelectedYear, getYears } from '../../selectors';
 import * as styles from './index.scss';
 
@@ -19,7 +20,7 @@ type Props = StateProps & DispatchProps;
 function DataTypePicker({ selectedYear, handleChange, years }: Props) {
   return (
     <div className={styles.container}>
-      {years.map(year =>
+      {years.map(year => (
         <label key={year} className={styles.option}>
           <input
             type="radio"
@@ -28,14 +29,14 @@ function DataTypePicker({ selectedYear, handleChange, years }: Props) {
             onChange={handleChange}
           />
           {year}
-        </label>,
-      )}
+        </label>
+      ))}
     </div>
   );
 }
 
 export default connect(
-  state => ({
+  (state: StateTree) => ({
     selectedYear: getSelectedYear(state),
     years: getYears(state),
   }),
