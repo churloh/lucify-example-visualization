@@ -3,6 +3,7 @@ import { scaleBand, ScaleBand, scaleLinear, ScaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
 import { Transition, transition as d3Transition } from 'd3-transition'; // Extends d3-selection
 import * as React from 'react';
+import Bar from './bar';
 
 export interface BarChartDatum {
   color: string;
@@ -148,7 +149,7 @@ export default class BarChart extends React.Component<Props> {
             transform={`translate(0,${this.getContentHeight()})`}
           />
           <g ref={ref => (this._yAxisRef = ref)} />
-          {data.map(d =>
+          {data.map(d => (
             <Bar
               key={d.id}
               x={xScale(d.id)!}
@@ -157,62 +158,10 @@ export default class BarChart extends React.Component<Props> {
               height={this.getContentHeight() - yScale(d.value)}
               fill={d.color}
               transition={this.transition}
-            />,
-          )}
+            />
+          ))}
         </g>
       </svg>
-    );
-  }
-}
-
-interface BarProps {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  fill: string;
-  transition: Transition<any, any, any, any>; // TODO: better typings
-}
-
-// tslint:disable:max-classes-per-file
-
-class Bar extends React.Component<BarProps> {
-  private _rectRef?: SVGElement | null;
-
-  public componentDidMount() {
-    this.updateHeight(true);
-  }
-
-  public componentDidUpdate(prevProps: BarProps) {
-    if (prevProps.height !== this.props.height) {
-      this.updateHeight(false);
-    }
-  }
-
-  // We use D3 to handle the height while React handles other attributes
-  private updateHeight(initialDraw: boolean) {
-    const { y, height, transition } = this.props;
-
-    if (initialDraw) {
-      select(this._rectRef!).attr('y', y).attr('height', height);
-    } else {
-      select(this._rectRef!)
-        .transition(transition)
-        .attr('y', y)
-        .attr('height', height);
-    }
-  }
-
-  public render() {
-    const { x, width, fill } = this.props;
-
-    return (
-      <rect
-        x={x}
-        width={width}
-        fill={fill}
-        ref={ref => (this._rectRef = ref)}
-      />
     );
   }
 }
